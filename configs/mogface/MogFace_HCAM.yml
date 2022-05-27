@@ -1,10 +1,10 @@
 root_path: ../../
 project_name: wider_face_base_model
 seed: 0
-max_iterations: 70000
+max_iterations: 210000
 log_smooth_window: 10
 snapshot_iter: 5000
-eval_iter_list: [70000]
+eval_iter_list: [210000]
 context_range: [3, 5]
 fp_th: 0.1
 use_hcam: True

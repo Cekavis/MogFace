@@ -50,7 +50,8 @@ class WiderFaceValSet(object):
         if self.img_idx >= len(self):
             raise StopIteration
         item = self.img_info_list[self.img_idx]
-        abs_img_path = os.path.join(self.img_dir_name, item[1], item[0]) + '.jpg'
+        abs_img_path = os.path.join(self.img_dir_name, item[1], item[0]) + '.png'
+        print(item[0], len(item[0]))
         img = cv2.imread(abs_img_path).astype(np.float32)
         img = self.preprocess_fn(img, phase=self.phase)
         self.img_idx += 1
@@ -245,12 +246,12 @@ class WiderFaceTrainSet(object):
         num_class = 0
         for i in range(len(lines_input_txt)):
             line_txt = lines_input_txt[i].strip('\n\t\r')
-            if '--' in line_txt:
+            if 'category' in line_txt or '--' in line_txt:
                 if i != 0:
                     num_class += 1
                 file_dict[num_class] = []
                 file_dict[num_class].append(line_txt)
-            if '--' not in line_txt:
+            if 'category' not in line_txt and '--' not in line_txt:
                 if len(line_txt) > 6:
                     split_str = line_txt.split(' ')
                     x1_min = float(split_str[0])

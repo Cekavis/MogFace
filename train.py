@@ -198,9 +198,9 @@ if __name__ == '__main__':
 
             torch.save(net.state_dict(), save_model_name)
 
-        if iter_idx in cfg.eval_iter_list:
+        # if iter_idx in cfg.eval_iter_list:
             # add singgle scale eval_net
-            os.system('CUDA_VISIBLE_DEVICES={} python test_single.py -n {} -c {}' \
-                      .format(os.environ["CUDA_VISIBLE_DEVICES"][0], int(iter_idx / 1000), args.config))
+            # os.system('python test_single.py -n {} -c {}' \
+            #           .format(int(iter_idx / 1000), args.config))
     tb_writer.close()
 

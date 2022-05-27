@@ -34,7 +34,7 @@ ext_modules = [
             './cython_nms.pyx'
         ],
         extra_compile_args=[
-            '-Wno-cpp'
+            # '-Wno-cpp'
         ],
         include_dirs=[
             _NP_INCLUDE_DIRS

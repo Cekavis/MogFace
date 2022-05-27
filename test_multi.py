@@ -40,6 +40,10 @@ parser.add_argument('--test_min_scale', default=0, type=int, help='the min scale
 parser.add_argument('--flip_ratio', default=None, type=float)
 parser.add_argument('--test_hard', default=0, type=int)
 
+parser.add_argument('--begin_id', default=1, type=int)
+parser.add_argument('--end_id', default=10000, type=int)
+
+
 
 
 def detect_face(image, shrink):
@@ -57,12 +61,19 @@ def detect_face(image, shrink):
 
     x = torch.from_numpy(x).permute(2, 0, 1)
     x = x.unsqueeze(0)
-    x = Variable(x.cuda(), volatile=True)
+    with torch.no_grad():
+        if torch.cuda.is_available():
+            x = Variable(x.cuda())
+        else:
+            x = Variable(x)
 
     out = net(x)
     
     anchors = anchor_utils.transform_anchor((val_set.generate_anchors_fn(height, width)))
-    anchors = torch.FloatTensor(anchors).cuda()
+    if torch.cuda.is_available():
+        anchors = torch.FloatTensor(anchors).cuda()
+    else:
+        anchors = torch.FloatTensor(anchors)
     decode_bbox =  anchor_utils.decode(out[1].squeeze(0), anchors)
     boxes = decode_bbox
     scores = out[0].squeeze(0)
@@ -263,8 +274,8 @@ def bbox_vote(det):
 
 
 def write_to_txt(f, det, height, width, img_name, img_dir_name):
-    f.write('{:s}\n'.format(img_dir_name + '/' + img_name + '.jpg'))
-    f.write('{:d}\n'.format(det.shape[0]))
+    # f.write('{:s}\n'.format(img_dir_name + '/' + img_name + '.jpg'))
+    # f.write('{:d}\n'.format(det.shape[0]))
     for i in range(det.shape[0]):
         if det[i][0] < 0.0:
             xmin = 0.0
@@ -288,7 +299,7 @@ def write_to_txt(f, det, height, width, img_name, img_dir_name):
 
         score = det[i][4]
         f.write('{:.1f} {:.1f} {:.1f} {:.1f} {:.3f}\n'.
-                format(round(xmin), round(ymin), round(xmax - xmin + 1), round(ymax - ymin + 1), score))
+                format(round(xmin), round(ymin), round(xmax), round(ymax), score))
 
 def gen_soft_link_dir(dir_name_list):
     for dir_name in dir_name_list:
@@ -306,6 +317,10 @@ def gen_dir(dir_name_list):
 
 if __name__ == '__main__':
     args = parser.parse_args()
+    
+    begin_id = args.begin_id
+    end_id = args.end_id
+    
     if args.test_hard:
         args.max_img_shrink = 2.3
         args.vote_th = 0.5
@@ -337,16 +352,24 @@ if __name__ == '__main__':
     net = create(cfg.architecture)
     model_name = os.path.join(snapshots_dir, 'model_{}000.pth'.format(args.num_iter))
     print ('Load model from {}'.format(model_name))
-    net.load_state_dict(torch.load(model_name))
-    net.cuda()
+    net.load_state_dict(torch.load(model_name, map_location=torch.device('cpu')))
+    if torch.cuda.is_available():
+        net.cuda()
     net.eval()
     print ('Finish load model.')
 
     val_set= create(cfg.validation_set)
     val_set_iter = iter(val_set)
 
+    cur_id = 0
+    
     # generate predict bbox
     for (img, img_name, img_dir_name) in tqdm(val_set_iter):
+        cur_id = cur_id+1
+        if(cur_id<begin_id or cur_id>end_id):
+            continue
+        # print(img.shape, img_name, img_dir_name)
+        # exit()
         event_dir = os.path.join(abs_save_dir, img_dir_name)
         if not os.path.exists(event_dir):
             os.system('mkdir -p {}'.format(event_dir))

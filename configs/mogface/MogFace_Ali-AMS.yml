@@ -1,8 +1,8 @@
 seed: 0
-max_iterations: 70000
+max_iterations: 210000
 log_smooth_window: 10
 snapshot_iter: 5000
-eval_iter_list: [70000]
+eval_iter_list: [210000]
 
 architecture: WiderFaceBaseNet
 out_bbox_anchor: True

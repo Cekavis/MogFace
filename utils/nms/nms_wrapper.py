@@ -1,3 +1,6 @@
+import pyximport
+pyximport.install()
+
 from . import cython_nms
 
 def nms(dets, thresh):
