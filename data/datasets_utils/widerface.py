@@ -19,6 +19,62 @@ import scipy.io as sio
 cv2.setNumThreads(0)
 
 @register
+class DarkFaceTestSet(object):
+    __shared__ = ['generate_anchors_fn', 'preprocess_fn']
+    __inject__ = ['generate_anchors_fn', 'preprocess_fn']
+    def __init__(self, 
+                 phase='test',
+                 base_data_path = './dataset',
+                #  img_info_mat_path='WIDERFACE/wider_face_split/wider_face_val.mat',
+                 img_dir_name='DarkFace',
+                 generate_anchors_fn=None, 
+                 preprocess_fn=None,
+                 ):
+        self.phase=phase
+        self.dataset_path = base_data_path
+        # self.img_info_mat_path  = os.path.join(self.dataset_path, img_info_mat_path)
+        self.img_dir_name = os.path.join(self.dataset_path, img_dir_name)
+        self.generate_anchors_fn = generate_anchors_fn
+        self.preprocess_fn = preprocess_fn
+        self.img_info_list = self.parse_gt_mat()
+        self.img_idx = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        '''
+        return img, img_name(not abs_path), dir_name(not abs_path)
+        e.g. img_name: []
+        '''
+        if self.img_idx >= len(self):
+            raise StopIteration
+        item = self.img_info_list[self.img_idx]
+        abs_img_path = os.path.join(self.img_dir_name, item[1], item[0]) + '.png'
+        img = cv2.imread(abs_img_path).astype(np.float32)
+        img = self.preprocess_fn(img, phase=self.phase)
+        self.img_idx += 1
+        return img, item[0], item[1]
+
+
+    def __getitem__(self, idx):
+        return self.img_info_list[idx]
+        pass
+
+    def __len__(self):
+        return len(self.img_info_list)
+
+    def parse_gt_mat(self):
+        '''
+        ret: [[img_name(not abs_path), dir_name(not abs_path)], ...]
+        '''
+        img_names = os.listdir(self.img_dir_name+'/res')
+        ret_list = [[i.replace('.png', ''), 'res'] for i in img_names]
+
+        return ret_list
+
+
+@register
 class WiderFaceValSet(object):
     __shared__ = ['generate_anchors_fn', 'preprocess_fn']
     __inject__ = ['generate_anchors_fn', 'preprocess_fn']
@@ -50,8 +106,7 @@ class WiderFaceValSet(object):
         if self.img_idx >= len(self):
             raise StopIteration
         item = self.img_info_list[self.img_idx]
-        abs_img_path = os.path.join(self.img_dir_name, item[1], item[0]) + '.png'
-        print(item[0], len(item[0]))
+        abs_img_path = os.path.join(self.img_dir_name, item[1], item[0]) + '.jpg'
         img = cv2.imread(abs_img_path).astype(np.float32)
         img = self.preprocess_fn(img, phase=self.phase)
         self.img_idx += 1

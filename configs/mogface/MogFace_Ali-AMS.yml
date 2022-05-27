@@ -18,7 +18,7 @@ lr: 0.004
 criterion: MogCriterion
 
 train_feed: TrainFeed
-validation_set: WiderFaceValSet
+validation_set: DarkFaceTestSet
 generate_anchors_fn: GeneartePriorBoxes
 preprocess_fn: BasePreprocess
 collate_fn: BBoxAnchorTrainCollate
