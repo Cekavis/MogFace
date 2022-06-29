@@ -6,6 +6,7 @@
 # Description  : 
 # ******************************************************
 from __future__ import absolute_import
+from posixpath import dirname
 import sys
 import argparse
 import numpy as np
@@ -313,7 +314,8 @@ def gen_soft_link_dir(dir_name_list):
 def gen_dir(dir_name_list):
     for dir_name in dir_name_list:
         if not os.path.exists(dir_name):
-            os.system('mkdir -p {}'.format(dir_name))
+            # os.system('mkdir -p {}'.format(dir_name))
+            os.makedirs(dir_name)
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -372,7 +374,8 @@ if __name__ == '__main__':
         # exit()
         event_dir = os.path.join(abs_save_dir, img_dir_name)
         if not os.path.exists(event_dir):
-            os.system('mkdir -p {}'.format(event_dir))
+            # os.system('mkdir -p {}'.format(event_dir))
+            os.makedirs(event_dir)
         with torch.no_grad():
             max_im_shrink = (0x7fffffff / 200.0 / (img.shape[0] * img.shape[1])) ** 0.5 # the max size of input image for caffe
             max_im_shrink = args.max_img_shrink  if max_im_shrink > 2.2 else max_im_shrink

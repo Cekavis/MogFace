@@ -1,4 +1,4 @@
-CUDA_VISIBLE_DEVICES=0,1 python train.py -c configs/mogface/MogFace_Ali-AMS.yml -b 18 -n 9 -r 70
+CUDA_VISIBLE_DEVICES=0,1 python train.py -c configs/mogface/MogFace_Ali-AMS.yml -b 18 -n 9 -r 210
 
 CUDA_VISIBLE_DEVICES=0 python test_multi.py -c configs/mogface/MogFace_Ali-AMS.yml -n 210 --end_id 2000
 

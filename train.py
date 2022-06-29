@@ -187,7 +187,7 @@ if __name__ == '__main__':
                 print('Loss conf: {:.4f} Loss loc: {:.4f} Loss_hcam: {:.4f}'.format(cls_loss.data, loc_loss.data, cls_loss_1.data))
             else:
                 print('Loss conf: {:.4f} Loss loc: {:.4f}'.format(cls_loss.data, loc_loss.data))
-            print('lr: {:.4f}'.format(optimizer.param_groups[0]['lr']))
+            print('lr: {:.10f}'.format(optimizer.param_groups[0]['lr']))
 
         if iter_idx % cfg.snapshot_iter == 0 and iter_idx != start_iter:
             if iter_idx == 0:

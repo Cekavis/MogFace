@@ -1,8 +1,8 @@
 seed: 0
-max_iterations: 210000
+max_iterations: 280000
 log_smooth_window: 10
 snapshot_iter: 5000
-eval_iter_list: [210000]
+eval_iter_list: [280000]
 
 architecture: WiderFaceBaseNet
 out_bbox_anchor: True
@@ -13,7 +13,7 @@ num_classes: 1
 
 optimizer: SGDOptimizer
 warmup_strategy: LinearWarmup
-lr: 0.004
+lr: 0.00004
 
 criterion: MogCriterion
 
@@ -60,9 +60,9 @@ SmoothL1Loss:
   sigma: 3
 
 TrainFeed:
-  dataset: WiderFaceTrainSet
+  dataset: CVFaceTrainSet
 
-WiderFaceTrainSet:
+CVFaceTrainSet:
   anchor_target_fn: AnchorTarget
   data_aug_settings: DataAugSettings
 
